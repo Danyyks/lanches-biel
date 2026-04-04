@@ -72,9 +72,6 @@ const DRINK_ITEMS = [
   { id: "d4", name: "Guaraná lata", price: 6.0 },
   { id: "d5", name: "Skol lata 269", price: 5.0 },
   { id: "d6", name: "Original lata 269", price: 6.0 },
-  { id: "d7", name: "Amstel 600", price: 13.0 },
-  { id: "d8", name: "Original 600", price: 15.0 },
-  { id: "d9", name: "Heineken 600", price: 17.0 },
 ];
 
 export default function App() {
