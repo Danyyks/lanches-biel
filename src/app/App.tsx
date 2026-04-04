@@ -7,7 +7,6 @@ import burger2 from "../assets/1accdf30ffaa462b4fe2329cf0fa884d91e9d5b0.png";
 import burger3 from "../assets/5f168483bf3dffe5fc431528b1c76973c80d58c5.png";
 import burger4 from "../assets/1381504f460c565780b909d22f8818a7e5de865c.png";
 import burger5 from "../assets/150f9a73ef4707d2c2c8370830102ef590a8b940.png";
-import burger6 from "../assets/682f953d4d9be8c2d1c764f8e8939b14bbf90bbf.png";
 import { LoginScreen } from "./components/LoginScreen";
 import { FoodCard } from "./components/FoodCard";
 import { DrinkCard } from "./components/DrinkCard";
@@ -54,14 +53,6 @@ const FOOD_ITEMS = [
       "Pão de tapioca, purê de batata da casa, calabresa, maionese de bacon, cebola roxa e queijo quente.",
     price: 27.0,
     image: burger5,
-  },
-  {
-    id: "f6",
-    name: "Costelão",
-    description:
-      "Pão de tapioca, purê de batata da casa, costela bovina misturada com queijo e catupiry, maionese, cebola roxa, fatias de bacon e queijo quente.",
-    price: 35.0,
-    image: burger6,
   },
 ];
 
