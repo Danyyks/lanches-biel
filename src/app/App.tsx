@@ -162,11 +162,11 @@ export default function App() {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-30 border-b border-orange-100">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Logo" className="w-12 h-12 md:w-20 md:h-20 object-contain" />
-            <div>
+          <div className="flex items-center gap-3 min-w-0">
+            <img src={logo} alt="Logo" className="w-12 h-12 md:w-20 md:h-20 object-contain shrink-0" />
+            <div className="min-w-0">
               <h1 className="text-xl md:text-3xl text-orange-600 mb-0.5 md:mb-1">Lanches do Biel</h1>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-xs md:text-sm text-gray-600 truncate">
                 {userName}, seja bem-vindo! Bom apetite!
               </p>
             </div>
@@ -190,13 +190,13 @@ export default function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-12 px-4">
+      <section className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-8 md:py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-4 text-white"
+            className="mb-3 md:mb-4 text-white text-xl md:text-2xl"
           >
             Aqui a pegada STREET é de verdade.
           </motion.h2>
@@ -204,7 +204,7 @@ export default function App() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg leading-relaxed max-w-3xl mx-auto"
+            className="text-sm md:text-lg leading-relaxed max-w-3xl mx-auto"
           >
             Cada lanche é feito na hora, direto na chapa, carne suculenta e zero
             frescura. É lanche honesto, artesanal e cheio de sabor, do jeito que
@@ -275,12 +275,10 @@ export default function App() {
           <p className="text-gray-400">
             © 2026 Lanches do Biel - Todos os direitos reservados
           </p>
-          <p className="text-gray-500 text-sm mt-2">
-            Lanche honesto, artesanal e cheio de sabor
-          </p>
-          <p className="text-gray-600 text-xs mt-3">
-            Desenvolvido por Dany Jonathan Bueno
-          </p>
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <span className="text-gray-500 text-sm">Desenvolvido por:</span>
+            <img src="/khode-logo.svg" alt="Khode Systems" className="h-8 opacity-70" />
+          </div>
         </div>
       </footer>
 

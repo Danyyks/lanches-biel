@@ -32,15 +32,15 @@ export function FoodCard({ name, description, price, image, onAdd }: FoodCardPro
         <p className="text-gray-600 mb-4 text-sm leading-relaxed line-clamp-2">
           {description}
         </p>
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-orange-600">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-xl md:text-2xl font-bold text-orange-600 shrink-0">
             R$ {price.toFixed(2)}
           </span>
           <button
             onClick={onAdd}
-            className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 py-2.5 transition-colors duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+            className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-4 md:px-6 py-2.5 transition-colors duration-200 flex items-center gap-1.5 shadow-md hover:shadow-lg text-sm md:text-base shrink-0"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4 md:w-5 md:h-5" />
             Adicionar
           </button>
         </div>
