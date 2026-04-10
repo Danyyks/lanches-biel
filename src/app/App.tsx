@@ -1,22 +1,23 @@
-import { useState } from "react";
-import { ShoppingCart } from "lucide-react";
-import { motion } from "motion/react";
-import logo from "../assets/1a3f094c03c1d28c4439e1d310422bbc5ff07df9.png";
-import burger1 from "../assets/28b4c54730b935b5f01ce44fea3dd0b8f721c52c.png";
-import burger2 from "../assets/1accdf30ffaa462b4fe2329cf0fa884d91e9d5b0.png";
-import burger3 from "../assets/5f168483bf3dffe5fc431528b1c76973c80d58c5.png";
-import burger4 from "../assets/1381504f460c565780b909d22f8818a7e5de865c.png";
-import burger5 from "../assets/150f9a73ef4707d2c2c8370830102ef590a8b940.png";
-import { LoginScreen } from "./components/LoginScreen";
-import { FoodCard } from "./components/FoodCard";
-import { DrinkCard } from "./components/DrinkCard";
-import { AddItemModal } from "./components/AddItemModal";
-import { CartDrawer, CartItem } from "./components/CartDrawer";
+import { useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { motion } from 'motion/react';
+import logo from '../assets/logo.jpeg';
+import burger1 from '../assets/28b4c54730b935b5f01ce44fea3dd0b8f721c52c.png';
+import burger2 from '../assets/1accdf30ffaa462b4fe2329cf0fa884d91e9d5b0.png';
+import burger3 from '../assets/5f168483bf3dffe5fc431528b1c76973c80d58c5.png';
+import burger4 from '../assets/1381504f460c565780b909d22f8818a7e5de865c.png';
+import burger5 from '../assets/150f9a73ef4707d2c2c8370830102ef590a8b940.png';
+import costelao from '../assets/costelão.jpeg';
+import { LoginScreen } from './components/LoginScreen';
+import { FoodCard } from './components/FoodCard';
+import { DrinkCard } from './components/DrinkCard';
+import { AddItemModal } from './components/AddItemModal';
+import { CartDrawer, CartItem } from './components/CartDrawer';
 
 const FOOD_ITEMS = [
   {
     id: "f1",
-    name: "RIb Street Raiz",
+    name: "Rib Street Raiz",
     description:
       "Pão de tapioca, purê de batata da casa, costela suína desfiada, catupiry, maionese, queijo quente e espinafre.",
     price: 30.0,
@@ -26,7 +27,7 @@ const FOOD_ITEMS = [
     id: "f2",
     name: "Mineirão Raiz",
     description:
-      "Pão de tapioca, purê de batata da casa, linguiça Toscana, cebola roxa, maionese de bacon, cebola roxa e queijo quente.",
+      "Pão de tapioca, purê de batata da casa, linguiça Toscana, maionese de bacon, cebola roxa e queijo quente.",
     price: 27.0,
     image: burger2,
   },
@@ -53,6 +54,14 @@ const FOOD_ITEMS = [
       "Pão de tapioca, purê de batata da casa, calabresa, maionese de bacon, cebola roxa e queijo quente.",
     price: 27.0,
     image: burger5,
+  },
+  {
+    id: "f6",
+    name: "Costelão",
+    description:
+      "Pão de tapioca, purê de batata da casa, costela bovina misturada com queijo e catupiry, maionese, cebola roxa, fatias de bacon e queijo quente.",
+    price: 35.0,
+    image: costelao,
   },
 ];
 
@@ -97,18 +106,23 @@ export default function App() {
 
   const handleAddToCart = (quantity: number, notes: string) => {
     const existingItemIndex = cartItems.findIndex(
-      (item) => item.id === modalData.id && item.notes === notes,
+      (item) => item.productId === modalData.id && item.notes === notes,
     );
 
     if (existingItemIndex >= 0) {
-      const updatedItems = [...cartItems];
-      updatedItems[existingItemIndex].quantity += quantity;
-      setCartItems(updatedItems);
+      setCartItems(
+        cartItems.map((item, i) =>
+          i === existingItemIndex
+            ? { ...item, quantity: item.quantity + quantity }
+            : item,
+        ),
+      );
     } else {
       setCartItems([
         ...cartItems,
         {
           id: `${modalData.id}-${Date.now()}`,
+          productId: modalData.id,
           name: modalData.name,
           price: modalData.price,
           quantity,
@@ -163,7 +177,7 @@ export default function App() {
       <header className="bg-white shadow-sm sticky top-0 z-30 border-b border-orange-100">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <img src={logo} alt="Logo" className="w-12 h-12 md:w-20 md:h-20 object-contain shrink-0" />
+            <img src={logo} alt="Logo" className="w-10 h-14 md:w-16 md:h-20 object-contain shrink-0" />
             <div className="min-w-0">
               <h1 className="text-xl md:text-3xl text-orange-600 mb-0.5 md:mb-1">Lanches do Biel</h1>
               <p className="text-xs md:text-sm text-gray-600 truncate">
@@ -173,6 +187,7 @@ export default function App() {
           </div>
           <button
             onClick={() => setIsCartOpen(true)}
+            aria-label={`Abrir carrinho${totalItems > 0 ? `, ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}` : ''}`}
             className="relative bg-orange-500 hover:bg-orange-600 text-white rounded-full p-3 transition-colors duration-200 shadow-md hover:shadow-lg"
           >
             <ShoppingCart className="w-6 h-6" />

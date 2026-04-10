@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import logo from '../../assets/1a3f094c03c1d28c4439e1d310422bbc5ff07df9.png';
+import logo from '../../assets/logo.jpeg';
 
 interface LoginScreenProps {
   onLogin: (name: string) => void;
@@ -9,7 +9,7 @@ interface LoginScreenProps {
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [name, setName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (name.trim()) {
       onLogin(name.trim());
@@ -28,7 +28,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <motion.img
             src={logo}
             alt="Logo"
-            className="w-32 h-32 mx-auto mb-6 object-contain"
+            className="w-40 h-48 mx-auto mb-6 object-contain"
             initial={{ rotate: -10 }}
             animate={{ rotate: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -55,6 +55,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Digite seu nome..."
+              autoFocus
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg"
               required
             />
