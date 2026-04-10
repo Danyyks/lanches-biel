@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, X, Minus, Plus, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -30,6 +30,17 @@ export function CartDrawer({
 }: CartDrawerProps) {
   const [address, setAddress] = useState('');
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
