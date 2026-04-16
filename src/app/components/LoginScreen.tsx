@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import logo from '../../assets/logo.jpeg';
+import logoDefault from '../../assets/logo.jpeg';
 
 interface LoginScreenProps {
   onLogin: (name: string) => void;
+  logo?: string;
 }
 
-export function LoginScreen({ onLogin }: LoginScreenProps) {
+export function LoginScreen({ onLogin, logo }: LoginScreenProps) {
+  const logoSrc = logo ?? logoDefault;
   const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,7 +28,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       >
         <div className="text-center mb-8">
           <motion.img
-            src={logo}
+            src={logoSrc}
             alt="Logo"
             className="w-40 h-48 mx-auto mb-6 object-contain"
             initial={{ rotate: -10 }}

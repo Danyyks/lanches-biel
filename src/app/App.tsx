@@ -1,81 +1,22 @@
 import { useState } from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import logo from '../assets/logo.jpeg';
-import burger1 from '../assets/28b4c54730b935b5f01ce44fea3dd0b8f721c52c.png';
-import burger2 from '../assets/1accdf30ffaa462b4fe2329cf0fa884d91e9d5b0.png';
-import burger3 from '../assets/5f168483bf3dffe5fc431528b1c76973c80d58c5.png';
-import burger4 from '../assets/1381504f460c565780b909d22f8818a7e5de865c.png';
-import burger5 from '../assets/150f9a73ef4707d2c2c8370830102ef590a8b940.png';
-import costelao from '../assets/costelão.jpeg';
 import { LoginScreen } from './components/LoginScreen';
 import { FoodCard } from './components/FoodCard';
 import { DrinkCard } from './components/DrinkCard';
 import { AddItemModal } from './components/AddItemModal';
 import { CartDrawer, CartItem } from './components/CartDrawer';
-
-const FOOD_ITEMS = [
-  {
-    id: "f1",
-    name: "Rib Street Raiz",
-    description:
-      "Pão de tapioca, purê de batata da casa, costela suína desfiada, catupiry, maionese, queijo quente e espinafre.",
-    price: 30.0,
-    image: burger1,
-  },
-  {
-    id: "f2",
-    name: "Mineirão Raiz",
-    description:
-      "Pão de tapioca, purê de batata da casa, linguiça Toscana, maionese de bacon, cebola roxa e queijo quente.",
-    price: 27.0,
-    image: burger2,
-  },
-  {
-    id: "f3",
-    name: "Mortadelão",
-    description:
-      "Pão de tapioca, fatias de mortadela e mussarela, cebola roxa e maionese.",
-    price: 22.0,
-    image: burger3,
-  },
-  {
-    id: "f4",
-    name: "Chicken Street",
-    description:
-      "Pão de tapioca, purê de batata da casa, frango desfiado, catupiry, maionese e fatias de bacon.",
-    price: 27.0,
-    image: burger4,
-  },
-  {
-    id: "f5",
-    name: "Calabresa Broken",
-    description:
-      "Pão de tapioca, purê de batata da casa, calabresa, maionese de bacon, cebola roxa e queijo quente.",
-    price: 27.0,
-    image: burger5,
-  },
-  {
-    id: "f6",
-    name: "Costelão",
-    description:
-      "Pão de tapioca, purê de batata da casa, costela bovina misturada com queijo e catupiry, maionese, cebola roxa, fatias de bacon e queijo quente.",
-    price: 35.0,
-    image: costelao,
-  },
-];
-
-const DRINK_ITEMS = [
-  { id: "d1", name: "Coca Cola lata", price: 7.0 },
-  { id: "d2", name: "Sprite lata", price: 7.0 },
-  { id: "d3", name: "Sprite Lemon Fresh", price: 8.0 },
-  { id: "d4", name: "Guaraná lata", price: 6.0 },
-  { id: "d5", name: "Skol lata 269", price: 5.0 },
-  { id: "d6", name: "Original lata 269", price: 6.0 },
-];
+import { AdminLogin } from './components/admin/AdminLogin';
+import { AdminPanel } from './components/admin/AdminPanel';
+import { useMenuData } from './hooks/useMenuData';
 
 export default function App() {
-  const [userName, setUserName] = useState<string>("");
+  // ── Cardápio e perfil vindos do Supabase ────────────────────
+  const { foods, drinks, combos, profile, loading, error, refresh } =
+    useMenuData();
+
+  // ── Estado do cliente ───────────────────────────────────────
+  const [userName, setUserName] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -84,13 +25,13 @@ export default function App() {
     id: string;
     name: string;
     price: number;
-  }>({
-    isOpen: false,
-    id: "",
-    name: "",
-    price: 0,
-  });
+  }>({ isOpen: false, id: '', name: '', price: 0 });
 
+  // ── Estado do admin ─────────────────────────────────────────
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  // ── Handlers do cliente ─────────────────────────────────────
   const handleLogin = (name: string) => {
     setUserName(name);
     setIsLoggedIn(true);
@@ -101,18 +42,18 @@ export default function App() {
   };
 
   const closeModal = () => {
-    setModalData({ ...modalData, isOpen: false });
+    setModalData((prev) => ({ ...prev, isOpen: false }));
   };
 
   const handleAddToCart = (quantity: number, notes: string) => {
-    const existingItemIndex = cartItems.findIndex(
+    const existingIndex = cartItems.findIndex(
       (item) => item.productId === modalData.id && item.notes === notes,
     );
 
-    if (existingItemIndex >= 0) {
+    if (existingIndex >= 0) {
       setCartItems(
         cartItems.map((item, i) =>
-          i === existingItemIndex
+          i === existingIndex
             ? { ...item, quantity: item.quantity + quantity }
             : item,
         ),
@@ -153,33 +94,100 @@ export default function App() {
 
     cartItems.forEach((item) => {
       message += `• ${item.name} (${item.quantity}x)`;
-      if (item.notes) {
-        message += ` - ${item.notes}`;
-      }
-      message += "\n";
+      if (item.notes) message += ` - ${item.notes}`;
+      message += '\n';
     });
 
     message += `\n*Total: R$ ${total.toFixed(2)}*`;
 
     const whatsappUrl = `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+    window.open(whatsappUrl, '_blank');
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  if (!isLoggedIn) {
-    return <LoginScreen onLogin={handleLogin} />;
+  // ── Itens visíveis para o cliente (somente ativos) ──────────
+  // Nota: o RLS do Supabase já filtra por active=true para usuários anônimos,
+  // mas filtramos aqui também por segurança no frontend.
+  const activeFoods = foods.filter((f) => f.active);
+  const activeDrinks = drinks.filter((d) => d.active);
+  const activeCombos = combos.filter((c) => c.active);
+
+  // ── Tela de carregamento inicial ────────────────────────────
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-orange-50 gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+        <p className="text-gray-500 text-sm">Carregando cardápio...</p>
+      </div>
+    );
   }
 
+  // ── Tela de erro (Supabase não configurado ou offline) ──────
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-orange-50 gap-4 px-6 text-center">
+        <p className="text-red-600 font-medium">Erro ao conectar ao banco de dados</p>
+        <p className="text-gray-500 text-sm max-w-sm">{error}</p>
+        <button
+          onClick={refresh}
+          className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
+  // ── Tela de login do cliente ────────────────────────────────
+  if (!isLoggedIn) {
+    return (
+      <>
+        <LoginScreen onLogin={handleLogin} logo={profile.logo} />
+        {/* Botão admin discreto sobreposto à tela de login */}
+        <button
+          onClick={() => setShowAdminLogin(true)}
+          className="fixed bottom-3 right-3 text-[10px] text-white/30 hover:text-white/60 transition-colors z-50 select-none"
+          aria-label="Acesso admin"
+        >
+          admin
+        </button>
+        <AdminLogin
+          isOpen={showAdminLogin}
+          onClose={() => setShowAdminLogin(false)}
+          onLogin={() => {
+            setShowAdminLogin(false);
+            setIsAdminLoggedIn(true);
+          }}
+        />
+        {isAdminLoggedIn && (
+          <AdminPanel
+            onLogout={() => {
+              setIsAdminLoggedIn(false);
+              refresh(); // Recarrega o cardápio após o admin fazer alterações
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
+  // ── Site principal (cliente logado) ─────────────────────────
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-30 border-b border-orange-100">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <img src={logo} alt="Logo" className="w-10 h-14 md:w-16 md:h-20 object-contain shrink-0" />
+            <img
+              src={profile.logo}
+              alt="Logo"
+              className="w-10 h-14 md:w-16 md:h-20 object-contain shrink-0"
+            />
             <div className="min-w-0">
-              <h1 className="text-xl md:text-3xl text-orange-600 mb-0.5 md:mb-1">Lanches do Biel</h1>
+              <h1 className="text-xl md:text-3xl text-orange-600 mb-0.5 md:mb-1">
+                Lanches do Biel
+              </h1>
               <p className="text-xs md:text-sm text-gray-600 truncate">
                 {userName}, seja bem-vindo! Bom apetite!
               </p>
@@ -229,26 +237,22 @@ export default function App() {
       </section>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Food Section */}
+        {/* ── Seção Lanches ── */}
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-orange-500 rounded-full p-2">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M21.9 5.6c0-.3-.2-.5-.5-.5H15c-.3 0-.5.2-.5.5s.2.5.5.5h5.9l-1.6 7.8c-.2.8-.9 1.4-1.7 1.4H9.7c-.8 0-1.5-.6-1.7-1.4L6.4 6.1h-.9c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1.2c.2 0 .4.2.5.4l.3 1.6h12.4c.2 0 .4.1.5.3zm-4.4 10.7H9.7c-1.3 0-2.4-1-2.7-2.3L5.4 6.1H2.5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h3.2c.2 0 .4.2.5.4l1.5 7.9c.2.8.9 1.4 1.7 1.4h7.8c.8 0 1.5-.6 1.7-1.4l1.6-7.9c0-.2.3-.4.5-.4h.9c.3 0 .5.2.5.5s-.2.5-.5.5h-.6l-1.6 7.8c-.2 1.3-1.4 2.3-2.7 2.3zM10 19c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1zm8 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1z" />
               </svg>
             </div>
             <h2 className="text-orange-600">Lanches</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FOOD_ITEMS.map((item) => (
+            {activeFoods.map((item) => (
               <FoodCard
                 key={item.id}
                 name={item.name}
-                description={item.description}
+                description={item.description ?? ''}
                 price={item.price}
                 image={item.image}
                 onAdd={() => openModal(item.id, item.name, item.price)}
@@ -257,22 +261,44 @@ export default function App() {
           </div>
         </section>
 
-        {/* Drinks Section */}
+        {/* ── Seção Combos (só aparece se houver combos ativos) ── */}
+        {activeCombos.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-red-500 rounded-full p-2">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z" />
+                </svg>
+              </div>
+              <h2 className="text-red-600">Combos</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activeCombos.map((item) => (
+                <FoodCard
+                  key={item.id}
+                  name={item.name}
+                  description={item.description ?? ''}
+                  price={item.price}
+                  image={item.image}
+                  onAdd={() => openModal(item.id, item.name, item.price)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── Seção Bebidas ── */}
         <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-blue-500 rounded-full p-2">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-11H5.67l-.44-4h13.53l-.43 4z" />
               </svg>
             </div>
             <h2 className="text-blue-600">Bebidas</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {DRINK_ITEMS.map((item) => (
+            {activeDrinks.map((item) => (
               <DrinkCard
                 key={item.id}
                 name={item.name}
@@ -292,12 +318,24 @@ export default function App() {
           </p>
           <div className="flex items-center justify-center gap-3 mt-3">
             <span className="text-gray-500 text-sm">Desenvolvido por:</span>
-            <img src="/khode-logo.svg" alt="Khode Systems" className="h-8 opacity-70" />
+            <img
+              src="/khode-logo.svg"
+              alt="Khode Systems"
+              className="h-8 opacity-70"
+            />
           </div>
+          {/* Acesso admin — discreto, invisível para clientes comuns */}
+          <button
+            onClick={() => setShowAdminLogin(true)}
+            className="mt-4 text-[10px] text-gray-700 hover:text-gray-500 transition-colors select-none"
+            aria-label="Acesso restrito"
+          >
+            admin
+          </button>
         </div>
       </footer>
 
-      {/* Modals */}
+      {/* ── Modais do cliente ── */}
       <AddItemModal
         isOpen={modalData.isOpen}
         onClose={closeModal}
@@ -314,6 +352,25 @@ export default function App() {
         onRemoveItem={handleRemoveItem}
         onCheckout={handleCheckout}
       />
+
+      {/* ── Admin ── */}
+      <AdminLogin
+        isOpen={showAdminLogin}
+        onClose={() => setShowAdminLogin(false)}
+        onLogin={() => {
+          setShowAdminLogin(false);
+          setIsAdminLoggedIn(true);
+        }}
+      />
+
+      {isAdminLoggedIn && (
+        <AdminPanel
+          onLogout={() => {
+            setIsAdminLoggedIn(false);
+            refresh(); // Recarrega o cardápio após o admin salvar alterações
+          }}
+        />
+      )}
     </div>
   );
 }
