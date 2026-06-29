@@ -1,75 +1,57 @@
 # Lanches do Biel
 
-Cardápio digital para lanchonete, com sistema de carrinho e envio de pedido via WhatsApp.
+Cardápio digital desenvolvido para uma lanchonete real, substituindo o atendimento manual de pedidos por um fluxo simples: o cliente escolhe os itens, monta o carrinho e envia o pedido formatado direto para o WhatsApp da loja.
+
+O projeto nasceu de uma necessidade prática do dono do negócio, que recebia pedidos por mensagem de forma desorganizada. A solução manteve o canal que ele já usava (WhatsApp), mas padronizou a forma como o pedido chega: com itens, quantidades e observações já organizados em texto.
 
 ## Tecnologias
 
-- **React 18** + **TypeScript**
-- **Vite 6** (bundler)
-- **Tailwind CSS v4**
-- **Framer Motion** (animações)
-- **Radix UI / shadcn/ui** (componentes base)
-- **Lucide React** (ícones)
+- React 18 e TypeScript
+- Vite 6
+- Tailwind CSS v4
+- Framer Motion para as animações de interface
+- Radix UI e shadcn/ui para os componentes base
+- Supabase para persistência dos dados do cardápio
+- Lucide React para os ícones
 
-## Como rodar localmente
+## Como funciona
+
+O cliente abre o link, informa o nome e visualiza o cardápio com lanches e bebidas. Ao adicionar um item, escolhe a quantidade e pode incluir observações (tipo "sem cebola" ou "ponto da carne"). Os itens vão se acumulando no carrinho, que pode ser revisado antes da finalização. Ao confirmar, o app monta uma mensagem com todos os detalhes do pedido e abre o WhatsApp já com o texto pronto para envio.
+
+## Estrutura do código
+
+```
+src/
+├── app/
+│   ├── App.tsx               # estado global e layout principal
+│   └── components/
+│       ├── LoginScreen.tsx   # tela de entrada com o nome do cliente
+│       ├── FoodCard.tsx      # card de lanche
+│       ├── DrinkCard.tsx     # card de bebida
+│       ├── AddItemModal.tsx  # modal de quantidade e observações
+│       ├── CartDrawer.tsx    # carrinho lateral
+│       ├── helpers/
+│       │   └── ImageWithFallback.tsx
+│       └── ui/               # componentes base (shadcn/ui + Radix)
+├── assets/                   # imagens dos lanches
+└── styles/                   # estilos e tema
+```
+
+## Rodando o projeto localmente
 
 ```bash
 npm install
 npm run dev
 ```
 
-O app estará disponível em `http://localhost:5173`.
+O app fica disponível em `http://localhost:5173`.
 
-## Build para produção
+Para rodar localmente é preciso criar um arquivo `.env` com base no `.env.example`, com o número de WhatsApp e as credenciais do Supabase.
+
+## Build
 
 ```bash
 npm run build
 ```
 
-Os arquivos gerados ficam na pasta `dist/`.
-
-## Deploy na Vercel
-
-O projeto já está configurado para deploy na Vercel via `vercel.json`.
-
-1. Faça push do projeto para um repositório Git (GitHub, GitLab, etc.)
-2. Acesse [vercel.com](https://vercel.com) e importe o repositório
-3. A Vercel detectará automaticamente as configurações — clique em **Deploy**
-
-## Estrutura de pastas
-
-```
-src/
-├── app/
-│   ├── App.tsx               # Componente principal (estado global, layout)
-│   └── components/
-│       ├── LoginScreen.tsx   # Tela de entrada com o nome do cliente
-│       ├── FoodCard.tsx      # Card de lanche com imagem e botão adicionar
-│       ├── DrinkCard.tsx     # Card de bebida (sem imagem)
-│       ├── AddItemModal.tsx  # Modal de quantidade e observações
-│       ├── CartDrawer.tsx    # Gaveta lateral do carrinho
-│       ├── helpers/
-│       │   └── ImageWithFallback.tsx  # Componente de imagem com fallback
-│       └── ui/               # Componentes base (shadcn/ui + Radix)
-├── assets/                   # Imagens dos lanches
-├── styles/
-│   ├── index.css             # Entrada de estilos
-│   ├── tailwind.css          # Configuração Tailwind v4
-│   ├── theme.css             # Variáveis de cor e tema
-│   └── fonts.css             # Fontes customizadas
-└── main.tsx                  # Entry point da aplicação
-```
-
-## Fluxo da aplicação
-
-1. Cliente digita o nome na tela de login
-2. Visualiza o cardápio (lanches e bebidas)
-3. Clica em "Adicionar" → escolhe quantidade e observações no modal
-4. Abre o carrinho → revisa o pedido
-5. Clica em "Enviar pedido pelo WhatsApp" → abre o WhatsApp com o pedido formatado
-
-## Personalizando o cardápio
-
-Edite os arrays `FOOD_ITEMS` e `DRINK_ITEMS` no arquivo `src/app/App.tsx` para alterar nomes, descrições, preços e imagens dos produtos.
-
-Para trocar as imagens, substitua os arquivos em `src/assets/` e atualize os imports correspondentes no `App.tsx`.
+Os arquivos finais ficam em `dist/`.
